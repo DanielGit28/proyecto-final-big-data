@@ -2,7 +2,7 @@ import pandas as pd
 import os
 from sklearn.preprocessing import MinMaxScaler
 
-# Diccionario de países (puedes expandirlo)
+# Diccionario de países
 PAISES_OPSD = {
     'DE': 'Alemania',
     'GB': 'Reino Unido',
@@ -45,11 +45,10 @@ def procesar_opsd_por_pais():
         scaler = MinMaxScaler()
         df_clean[columna_pais] = scaler.fit_transform(df_clean[[columna_pais]])
 
-        # Guardamos
         output_file = f"{output_folder}/opsd_{codigo_pais}_preprocesado.csv"
         df_clean.to_csv(output_file, index=False)
 
-        print(f"\n✅ Preprocesamiento de {nombre_pais} completado. Archivo en: {output_file}")
+        print(f"\n Preprocesamiento de {nombre_pais} completado. Archivo en: {output_file}")
 
     except Exception as e:
         print(f"Error en procesamiento OPSD: {str(e)}")

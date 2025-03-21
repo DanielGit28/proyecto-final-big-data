@@ -28,7 +28,7 @@ def menu_principal():
         elif opcion == '5':
             menu_graficos_opsd()
         elif opcion == '6':
-            print("\n✅ Proceso finalizado. ¡Hasta luego!")
+            print("\n Proceso finalizado. ¡Hasta luego!")
             break
         else:
             print("Opción inválida. Por favor, elige nuevamente.")

@@ -37,7 +37,7 @@ def descargar_datos_nasa(ciudad, latitude, longitude):
 
     records = data['properties']['parameter']
 
-    # Creamos un DataFrame consolidado
+    # Se crea un DataFrame consolidado
     df = pd.DataFrame()
 
     for var in variables:
@@ -50,7 +50,7 @@ def descargar_datos_nasa(ciudad, latitude, longitude):
 
     df.index.name = 'Date'
 
-    # Crear directorio de salida si no existe
+    # Crear directorio de salida si no existe o si se quiere
     output_folder = f'output/{ciudad.lower()}'
     os.makedirs(output_folder, exist_ok=True)
 
