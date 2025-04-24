@@ -17,7 +17,7 @@ def graficar_opsd_preprocesado(pais_codigo):
         col_carga = [col for col in df.columns if col != 'utc_timestamp'][0]
 
         # Resample mensual de la serie normalizada
-        df_monthly = df[col_carga].resample('M').mean()
+        df_monthly = df[col_carga].resample('ME').mean()
 
         plt.figure(figsize=(14, 6))
         plt.plot(df_monthly.index, df_monthly.values, label=pais_codigo)
@@ -36,28 +36,50 @@ def graficar_opsd_preprocesado(pais_codigo):
     except Exception as e:
         print(f"Error generando gráfico: {str(e)}")
 
-def graficar_temp_vs_consumo():
-    clima = pd.read_csv('output/londres/nasa_power_londres_2024_preprocesado.csv', parse_dates=['Date'])
-    energia = pd.read_csv('output/opsd/opsd_GB_preprocesado.csv', parse_dates=['utc_timestamp'])
+def graficar_temp_vs_consumo(pais_codigo):
+    ciudad = 'londres' if pais_codigo == 'GB' else 'estocolmo' if pais_codigo == 'SE' else 'berlin'
+    clima_file = f"output/{ciudad}/nasa_power_{ciudad}_preprocesado.csv"
+    energia_file = f"output/opsd/opsd_{pais_codigo}_preprocesado.csv"
 
+    clima = pd.read_csv(clima_file, parse_dates=['Date'])
+    energia = pd.read_csv(energia_file, parse_dates=['utc_timestamp'])
+    
     energia['Date'] = energia['utc_timestamp'].dt.date
     energia_diario = energia.groupby('Date').mean().reset_index()
 
     clima['Date'] = pd.to_datetime(clima['Date']).dt.date
     merged = pd.merge(clima, energia_diario, on='Date')
+    
+    if not merged.empty:
+        #Gráfico de líneas
+        plt.figure(figsize=(10, 5))
+        plt.plot(merged['Date'], merged['T2M'], label='Temp')
+        plt.plot(merged['Date'], merged.iloc[:, -1], label='Carga')
+        plt.title('Evolución diaria de temperatura y consumo energético')
+        plt.xlabel('Fecha')
+        plt.ylabel('Valor normalizado')
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig(f'output/grafico_temporal_temp_carga_{ciudad}.png')
+        plt.show()
 
-    plt.figure(figsize=(8, 6))
-    plt.scatter(merged['T2M'], merged.iloc[:, -1], alpha=0.6)
-    plt.xlabel('Temperatura Normalizada (T2M)')
-    plt.ylabel('Carga Energética Normalizada')
-    plt.title('Relación entre Temperatura y Consumo Energético - Londres')
-    plt.grid(True)
-    plt.tight_layout()
-    plt.savefig('output/grafico_temp_vs_consumo.png')
-    plt.close()
+        merged['Mes'] = pd.to_datetime(merged['Date']).dt.month
 
-    corr = merged['T2M'].corr(merged.iloc[:, -1])
-    print(f"Correlación T2M vs Carga: {corr:.3f}")
+        plt.figure(figsize=(10, 6))
+        sns.scatterplot(data=merged, x='T2M', y=merged.columns[-2], hue='Mes', palette='viridis')
+        plt.xlabel('Temperatura Normalizada (T2M)')
+        plt.ylabel('Carga Energética Normalizada')
+        plt.title('Temperatura vs Consumo Energético (Coloreado por Mes)')
+        plt.legend(title='Mes')
+        plt.tight_layout()
+        plt.savefig(f'output/grafico_temp_vs_consumo_coloreado_{ciudad}.png')
+        plt.close()
+
+        corr = merged['T2M'].corr(merged.iloc[:, -1])
+        print(f"Correlación T2M vs Carga: {corr:.3f}")
+    else:
+        print("No se encontraron fechas comunes entre clima y energía.")
+
 
 def analisis_descriptivo_opsd(pais_codigo):
     input_file = f"output/opsd/opsd_{pais_codigo}_preprocesado.csv"

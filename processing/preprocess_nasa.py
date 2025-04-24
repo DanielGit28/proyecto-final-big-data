@@ -21,7 +21,7 @@ def procesar_datos(ruta_archivo, ciudad):
     # Guardar el resultado normalizado
     output_folder = f'output/{ciudad}'
     os.makedirs(output_folder, exist_ok=True)
-    output_file = f"{output_folder}/nasa_power_{ciudad}_2024_preprocesado.csv"
+    output_file = f"{output_folder}/nasa_power_{ciudad}_preprocesado.csv"
     df_scaled.to_csv(output_file)
 
     print(f"Preprocesamiento completo. Archivo guardado en: {output_file}")

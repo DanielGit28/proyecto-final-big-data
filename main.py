@@ -20,7 +20,6 @@ def menu_principal():
             menu_nasa()
         elif opcion == '2':
             opsd.descargar_opsd()
-            opsd.procesar_opsd()
         elif opcion == '3':
             menu_procesamiento_nasa()
         elif opcion == '4':
@@ -38,19 +37,20 @@ def menu_graficos_opsd():
         print("\n--- MENÚ PRINCIPAL ---")
         print("1. Gráfico de consumo eléctrico OPSD por país")
         print("2. Grafic temperatura vs consumo Londres")
-        print("3. Procesar datos de NASA (limpieza y normalización por ciudad)")
+        print("3. Analisis descriptivo por pais")
         print("4. Salir")
 
         opcion = input("\nSelecciona una opción (1-6): ")
 
         if opcion == '1':
-            pais_codigo = input("Ingresa el código del país procesado (DE, GB, SE, etc.): ").strip().upper()
+            pais_codigo = input("Ingresa el código del país procesado (Berlin (DE), Londres (GB), Estocolmo (SE), etc.): ").strip().upper()
             visualizer.graficar_opsd_preprocesado(pais_codigo)
         elif opcion == '2':
-            visualizer.graficar_temp_vs_consumo()
+            pais_codigo = input("Ingresa el código del país procesado (Berlin (DE), Londres (GB), Estocolmo (SE), etc.): ").strip().upper()
+            visualizer.graficar_temp_vs_consumo(pais_codigo)
         elif opcion == '3':
-            pais_codigo = input("Ingresa el código del país procesado (DE, GB, SE, etc.): ").strip().upper()
-            visualizer.analisis_descriptivo_opsd()
+            pais_codigo = input("Ingresa el código del país procesado (Berlin (DE), Londres (GB), Estocolmo (SE), etc.): ").strip().upper()
+            visualizer.analisis_descriptivo_opsd(pais_codigo)
         elif opcion == '4':
             break
         else:
@@ -80,7 +80,7 @@ def menu_nasa():
 def menu_procesamiento_nasa():
     print("\n--- PROCESAMIENTO NASA ---")
     ciudad = input("Escribe el nombre de la ciudad (estocolmo, londres, berlin): ").strip().lower()
-    archivo = f"output/{ciudad}/nasa_power_{ciudad}_2024.csv"
+    archivo = f"output/{ciudad}/nasa_power_{ciudad}.csv"
     
     try:
         preprocess_nasa.procesar_datos(archivo, ciudad)

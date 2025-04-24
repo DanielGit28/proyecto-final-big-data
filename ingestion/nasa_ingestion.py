@@ -2,11 +2,18 @@ import requests
 import pandas as pd
 import os
 import json
+import unicodedata
+
+def quitar_tildes(texto):
+    return ''.join(
+        c for c in unicodedata.normalize('NFKD', texto)
+        if not unicodedata.combining(c)
+    )
 
 def descargar_datos_nasa(ciudad, latitude, longitude):
     # Parámetros fijos
-    start_date = '20240101'
-    end_date = '20241231'
+    start_date = '20190930'
+    end_date = '20200930'
     community = 'RE'
     
     variables = [
@@ -49,12 +56,14 @@ def descargar_datos_nasa(ciudad, latitude, longitude):
             print(f"Advertencia: {var} no encontrado en la respuesta.")
 
     df.index.name = 'Date'
-
+    
+    ciudad_sin_tildes = quitar_tildes(ciudad.lower())
+    print('ciudad ', ciudad, ciudad_sin_tildes)
     # Crear directorio de salida si no existe o si se quiere
-    output_folder = f'output/{ciudad.lower()}'
+    output_folder = f'output/{ciudad_sin_tildes}'
     os.makedirs(output_folder, exist_ok=True)
 
-    output_file = f"{output_folder}/nasa_power_{ciudad.lower()}_2024.csv"
+    output_file = f"{output_folder}/nasa_power_{ciudad_sin_tildes}.csv"
     df.to_csv(output_file)
 
     print(f"Archivo guardado en: {output_file}")
