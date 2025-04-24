@@ -34,8 +34,28 @@ def menu_principal():
             print("Opción inválida. Por favor, elige nuevamente.")
 
 def menu_graficos_opsd():
-    pais_codigo = input("Ingresa el código del país procesado (DE, GB, SE, etc.): ").strip().upper()
-    visualizer.graficar_opsd_preprocesado(pais_codigo)
+    while True:
+        print("\n--- MENÚ PRINCIPAL ---")
+        print("1. Gráfico de consumo eléctrico OPSD por país")
+        print("2. Grafic temperatura vs consumo Londres")
+        print("3. Procesar datos de NASA (limpieza y normalización por ciudad)")
+        print("4. Salir")
+
+        opcion = input("\nSelecciona una opción (1-6): ")
+
+        if opcion == '1':
+            pais_codigo = input("Ingresa el código del país procesado (DE, GB, SE, etc.): ").strip().upper()
+            visualizer.graficar_opsd_preprocesado(pais_codigo)
+        elif opcion == '2':
+            visualizer.graficar_temp_vs_consumo()
+        elif opcion == '3':
+            pais_codigo = input("Ingresa el código del país procesado (DE, GB, SE, etc.): ").strip().upper()
+            visualizer.analisis_descriptivo_opsd()
+        elif opcion == '4':
+            break
+        else:
+            print("Opción inválida. Por favor, elige nuevamente.")
+    
 
 def menu_nasa():
     ciudades = {
